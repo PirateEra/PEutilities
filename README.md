@@ -1,0 +1,1 @@
+Utilities plugin for pirate-era, mostly adds additional features to existing plugins used within pirate-era.

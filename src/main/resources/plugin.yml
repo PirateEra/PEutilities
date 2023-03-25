@@ -2,3 +2,6 @@ name: PEutilities
 version: '${project.version}'
 main: org.udder.peutilities.PEutilities
 api-version: 1.19
+author: Udder
+description: Basic utilities for Pirate-Era
+depend: [ModelEngine, MythicMobs]

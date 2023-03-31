@@ -1,5 +1,6 @@
 package org.udder.peutilities;
 
+import com.ticxo.modelengine.api.animation.state.ModelState;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
 import com.ticxo.modelengine.api.mount.MountControllerRegistry;

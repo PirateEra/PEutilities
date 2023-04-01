@@ -8,6 +8,7 @@ import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 
 public class PEMountController extends AbstractMountController{
     public PEMountController() {
@@ -15,13 +16,17 @@ public class PEMountController extends AbstractMountController{
     }
 
     public void updateDriverMovement(MoveController controller, ModeledEntity modelEntity) {
+        // Used to for example check if we are in water
+        Block location = modelEntity.getBase().getLocation().getBlock();
+        String material = String.valueOf(location.getRelative(BlockFace.UP).getType());
         if (this.input.isSneak()) {
             modelEntity.getMountManager().removeDriver();
             controller.move(0.0F, 0.0F, 0.0F);
+            // Disable gravity on the mob, to make it float in water and not sink
+            if(String.valueOf(location.getType()).equals("WATER") && modelEntity.getBase().getOriginal() instanceof Entity){
+                ((Entity) modelEntity.getBase().getOriginal()).setGravity(false);
+            }
         } else {
-            // Used to for example check if we are in water
-            Block location = modelEntity.getBase().getLocation().getBlock();
-            String material = String.valueOf(location.getRelative(BlockFace.UP).getType());
             // Movement speed multiplier (this multiplies with entity movements speed set in the mythic mob)
             float multiplier = 1.0F;
             // This implies we move 50% slower in water

@@ -26,8 +26,7 @@ public class MountListener implements Listener {
                 // We check if the vehicle is a PE boat, if so the gravity might have been turned off so we turn it on
                 // (Gravity gets turned off when a boat is dismounted outside waters)
                 ModeledEntity vehicle = event.getVehicle();
-                if(vehicle.getBase().getOriginal() instanceof Entity &&
-                    vehicle.getMountManager().getDriverController() instanceof PEBoatController)
+                if(vehicle.getBase().getOriginal() instanceof Entity)
                 {
                     ((Entity) vehicle.getBase().getOriginal()).setGravity(true);
                 }

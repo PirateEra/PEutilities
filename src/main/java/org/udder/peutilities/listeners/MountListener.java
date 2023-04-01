@@ -1,17 +1,15 @@
 package org.udder.peutilities.listeners;
-import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.events.ModelDismountEvent;
 import com.ticxo.modelengine.api.events.ModelMountEvent;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
+import org.udder.peutilities.modelengine.mount.controller.pemount.PEDiveBoatController;
 import org.udder.peutilities.modelengine.mount.controller.pemount.PEFlyingMountController;
 
 import java.util.HashMap;
@@ -20,7 +18,7 @@ import static org.bukkit.Bukkit.getServer;
 
 public class MountListener implements Listener {
     private final JavaPlugin plugin;
-    private final HashMap<String, Integer> dismountCounter = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> dismountCounter = new HashMap<>();
     public MountListener(JavaPlugin plugin){
         this.plugin = plugin;
     }
@@ -51,7 +49,8 @@ public class MountListener implements Listener {
     public void doubleSneakDismount(ModelDismountEvent event){
         ModeledEntity vehicle = event.getVehicle();
         String uuid = String.valueOf(event.getPassenger().getUniqueId());
-        if(vehicle.getMountManager().getDriverController() instanceof PEFlyingMountController)
+        if(vehicle.getMountManager().getDriverController() instanceof PEFlyingMountController ||
+                vehicle.getMountManager().getDriverController() instanceof PEDiveBoatController)
         {
             // We detect double sneak here, So if it does not contain the value it means this is our first sneak
             if (!dismountCounter.containsKey(uuid)){
@@ -72,7 +71,9 @@ public class MountListener implements Listener {
             }else{
                 //If the player double sneaked we end up in this else statement
                 dismountCounter.remove(uuid);
-                noGravityDismount(vehicle);
+                if(vehicle.getMountManager().getDriverController() instanceof PEFlyingMountController){
+                    noGravityDismount(vehicle);
+                }
             }
         }
     }
@@ -81,6 +82,9 @@ public class MountListener implements Listener {
         // When dismounting a flying mount, it will always have no gravity
         if(vehicle.getBase().getOriginal() instanceof Entity) {
             ((Entity) vehicle.getBase().getOriginal()).setGravity(false);
+            //We need the runnable, because the mount is going to collide with the user on dismount,
+            // When it collides and has no gravity it will float around weirdly, so we set the velocity to 0
+            // The delay is needed to prevent it from happening before the collision.
             new BukkitRunnable(){public void run(){
                 if(vehicle.getBase().getOriginal() != null){
                     ((Entity) vehicle.getBase().getOriginal()).setVelocity(new Vector(0, 0, 0));

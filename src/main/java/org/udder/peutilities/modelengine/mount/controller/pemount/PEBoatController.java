@@ -8,7 +8,6 @@ import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class PEBoatController extends AbstractMountController{
@@ -25,10 +24,6 @@ public class PEBoatController extends AbstractMountController{
         if (this.input.isSneak()) {
             modelEntity.getMountManager().removeDriver();
             controller.move(0.0F, 0.0F, 0.0F);
-            // Disable gravity on the mob, to make it float in water and not sink
-            if(String.valueOf(location.getType()).equals("WATER") && modelEntity.getBase().getOriginal() instanceof Entity){
-                ((Entity) modelEntity.getBase().getOriginal()).setGravity(false);
-            }
         } else {
             //Needed to manipulate the models Y velocity, to prevent sinking
             Vector modelVelocity = controller.getVelocity();

@@ -39,17 +39,13 @@ public class PEmountcontroller extends AbstractMountController{
                 controller.move(0.0F, this.input.getFront(), 0.33F * multiplier);
             }
 
-            // Animation handling, This is only when on land, water is handled using mythic mob skills
-            // This is done with mythic mob skills, because the API does not allow setting non default states.
-            // I will look for a way to do this within the code to exclude mythic mob skills.
-            if(material != "WATER"){
-                if (this.input.getSide() == 0.0F && this.input.getFront() == 0.0F && controller.isOnGround()) {
-                    modelEntity.setState(ModelState.IDLE);
-                } else if (this.input.getFront() != 0.0F && controller.isOnGround()) {
-                    modelEntity.setState(ModelState.WALK);
-                } else if (!controller.isOnGround()){
-                    modelEntity.setState(ModelState.JUMP);
-                }
+            // Animation handling
+            if (this.input.getSide() == 0.0F && this.input.getFront() == 0.0F && controller.isOnGround()) {
+                modelEntity.setState(ModelState.IDLE);
+            } else if (this.input.getFront() != 0.0F && controller.isOnGround()) {
+                modelEntity.setState(ModelState.WALK);
+            } else if (!controller.isOnGround() && material != "WATER"){
+                modelEntity.setState(ModelState.JUMP);
             }
 
             // Jump logic, we call controller jump on space press whilst on ground

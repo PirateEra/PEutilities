@@ -6,12 +6,11 @@ import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.nms.entity.wrapper.LookController;
 import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController;
 import org.bukkit.Location;
-import com.ticxo.modelengine.api.entity.BaseEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
-public class PEflyingmountcontroller extends AbstractMountController{
-    public PEflyingmountcontroller(){
+public class PEFlyingMountController extends AbstractMountController{
+    public PEFlyingMountController(){
 
     }
 
@@ -20,7 +19,7 @@ public class PEflyingmountcontroller extends AbstractMountController{
         controller.nullifyFallDistance();
 
         // We set the Y velocity of the model to 0, to prevent it from falling downwards
-        // This way it can only descent using sneak
+        // This way it can only descend using sneak
         Vector modelVelocity = controller.getVelocity();
         controller.setVelocity(modelVelocity.getX(), 0.0, modelVelocity.getZ());
 

@@ -5,15 +5,14 @@ import com.ticxo.modelengine.api.animation.state.ModelState;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.nms.entity.wrapper.LookController;
 import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
-public class PEboatcontroller extends AbstractMountController{
-    public PEboatcontroller(){
+public class PEBoatController extends AbstractMountController{
+    public PEBoatController(){
 
     }
 

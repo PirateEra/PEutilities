@@ -9,8 +9,8 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-public class PEmountcontroller extends AbstractMountController{
-    public PEmountcontroller() {
+public class PEMountController extends AbstractMountController{
+    public PEMountController() {
 
     }
 

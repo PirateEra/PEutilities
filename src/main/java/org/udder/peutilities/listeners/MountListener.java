@@ -1,4 +1,5 @@
 package org.udder.peutilities.listeners;
+import com.ticxo.modelengine.api.events.ModelDismountEvent;
 import com.ticxo.modelengine.api.events.ModelMountEvent;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import org.bukkit.Bukkit;
@@ -18,20 +19,25 @@ public class MountListener implements Listener {
     }
     @EventHandler
     public void onMount(ModelMountEvent event){
-        // Create a scheduler, to run the event with a 1t delay
-        BukkitScheduler scheduler = getServer().getScheduler();
-        scheduler.scheduleSyncDelayedTask(this.plugin, new Runnable() {
-            @Override
-            public void run() {
-                // We check if the vehicle is a PE boat, if so the gravity might have been turned off so we turn it on
-                // (Gravity gets turned off when a boat is dismounted outside waters)
-                ModeledEntity vehicle = event.getVehicle();
-                if(vehicle.getBase().getOriginal() instanceof Entity)
-                {
-                    ((Entity) vehicle.getBase().getOriginal()).setGravity(true);
-                }
+        // We check if the vehicle is a PE boat, if so the gravity might have been turned off so we turn it on
+        // (Gravity gets turned off when a boat is dismounted outside waters)
+        ModeledEntity vehicle = event.getVehicle();
+        if(vehicle.getBase().getOriginal() instanceof Entity)
+        {
+            ((Entity) vehicle.getBase().getOriginal()).setGravity(true);
+        }
+    }
+
+    @EventHandler
+    public void onDismount(ModelDismountEvent event){
+        ModeledEntity vehicle = event.getVehicle();
+        if(vehicle.getBase().getOriginal() instanceof Entity)
+        {
+            // When we dismount, and we are inside of water. We turn off gravity, to stay floating
+            if (String.valueOf(vehicle.getBase().getLocation().getBlock().getType()).equals("WATER")){
+                ((Entity) vehicle.getBase().getOriginal()).setGravity(false);
             }
-        }, 1L);
+        }
     }
 
 }

@@ -5,6 +5,7 @@ import com.ticxo.modelengine.api.animation.state.ModelState;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.nms.entity.wrapper.LookController;
 import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -16,6 +17,8 @@ public class PEMountController extends AbstractMountController{
     }
 
     public void updateDriverMovement(MoveController controller, ModeledEntity modelEntity) {
+        // Prevent the controller from taking damage
+        controller.nullifyFallDistance();
         // Used to for example check if we are in water
         Block location = modelEntity.getBase().getLocation().getBlock();
         String material = String.valueOf(location.getRelative(BlockFace.UP).getType());

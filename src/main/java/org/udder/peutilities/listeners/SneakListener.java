@@ -1,8 +1,10 @@
 package org.udder.peutilities.listeners;
 
+import com.ticxo.modelengine.api.ModelEngineAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,12 +16,12 @@ import static org.bukkit.Bukkit.getServer;
 
 public class SneakListener implements Listener {
     private final JavaPlugin plugin;
-    private HashMap<String, Integer> sneakCounter = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> sneakCounter = new HashMap<String, Integer>();
     public SneakListener(JavaPlugin plugin){
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerSneak(PlayerToggleSneakEvent event){
         Player player = event.getPlayer();
         if(player.isSneaking()){
@@ -43,9 +45,9 @@ public class SneakListener implements Listener {
                 //If the player double sneaked we end up in this else statement
                 sneakCounter.remove(player.getName());
                 // Double sneak logic
+                Bukkit.getServer().getLogger().info(String.valueOf(ModelEngineAPI.getPlayerMountController(player.getUniqueId())));;
             }
         }
-
     }
 
 }

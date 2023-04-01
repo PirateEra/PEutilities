@@ -17,7 +17,6 @@ public final class PEutilities extends JavaPlugin {
         Bukkit.getServer().getLogger().info("PEutilities loaded");
         addpemounts();
         getServer().getPluginManager().registerEvents(new MountListener(this), this);
-        getServer().getPluginManager().registerEvents(new SneakListener(this), this);
     }
 
     @Override

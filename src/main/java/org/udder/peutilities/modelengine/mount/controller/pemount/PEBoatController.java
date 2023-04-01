@@ -17,6 +17,8 @@ public class PEBoatController extends AbstractMountController{
     }
 
     public void updateDriverMovement(MoveController controller, ModeledEntity modelEntity) {
+        // Prevent the controller from taking damage
+        controller.nullifyFallDistance();
         // Used to for example check if we are in water
         Block location = modelEntity.getBase().getLocation().getBlock();
         String material = String.valueOf(location.getRelative(BlockFace.UP).getType());

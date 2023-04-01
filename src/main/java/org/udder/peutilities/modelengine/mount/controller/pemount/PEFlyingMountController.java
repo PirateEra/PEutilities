@@ -5,11 +5,15 @@ import com.ticxo.modelengine.api.animation.state.ModelState;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.nms.entity.wrapper.LookController;
 import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class PEFlyingMountController extends AbstractMountController{
+    private boolean sneaking = false;
     public PEFlyingMountController(){
 
     }
@@ -18,20 +22,29 @@ public class PEFlyingMountController extends AbstractMountController{
         // Prevent the controller from taking damage
         controller.nullifyFallDistance();
 
+        // Used to for example check if we are in water
+        Block location = modelEntity.getBase().getLocation().getBlock();
+        String material = String.valueOf(location.getType());
+
         // We set the Y velocity of the model to 0, to prevent it from falling downwards
         // This way it can only descend using sneak
         Vector modelVelocity = controller.getVelocity();
         controller.setVelocity(modelVelocity.getX(), 0.0, modelVelocity.getZ());
-
         // When the player is trying to dismount, or descend
         if (this.input.isSneak()) {
-            if (controller.isOnGround()) {
+            // This will be cancelled in the doubleSneakDismount() function
+            // Unless it is pressed twice in a row.
+            if(!sneaking){
                 modelEntity.getMountManager().removeDriver();
-                controller.move(0.0F, 0.0F, 0.0F);
-                return;
             }
-            // Add negative velocity to the y of the model
-            controller.addVelocity(0.0, (double)(-controller.getSpeed()), 0.0);
+            // Add negative velocity to the y of the model, Only when not in water!
+            // This is because we do not want flying mounts to swim underwater
+            if(!material.equals("WATER")){
+                controller.addVelocity(0.0, (double)(-controller.getSpeed()), 0.0);
+            }
+            sneaking = true;
+        }else{
+            sneaking = false;
         }
 
         // When the player is trying to ascend
@@ -43,10 +56,14 @@ public class PEFlyingMountController extends AbstractMountController{
         controller.move(0.0F, this.input.getFront(), 1.0F);
 
         // Animation state handling
-        if (this.input.getSide() == 0.0F && this.input.getFront() == 0.0F) {
+        if(controller.isOnGround()){
+            if (this.input.getSide() == 0.0F && this.input.getFront() == 0.0F) {
+                modelEntity.setState(ModelState.IDLE);
+            } else if (this.input.getFront() != 0.0F) {
+                modelEntity.setState(ModelState.WALK);
+            }
+        }else{
             modelEntity.setState(ModelState.IDLE);
-        } else if (this.input.getFront() != 0.0F) {
-            modelEntity.setState(ModelState.WALK);
         }
     }
 
@@ -64,7 +81,7 @@ public class PEFlyingMountController extends AbstractMountController{
 
     public void updatePassengerMovement(MoveController controller, ModeledEntity modelEntity) {
         if (this.input.isSneak() && modelEntity.getBase().isOnGround()) {
-            modelEntity.getMountManager().removePassengers(new Entity[]{this.entity});
+            modelEntity.getMountManager().removePassenger(this.entity);
         }
     }
 }

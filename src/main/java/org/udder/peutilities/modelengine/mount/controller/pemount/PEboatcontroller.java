@@ -5,28 +5,44 @@ import com.ticxo.modelengine.api.animation.state.ModelState;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.nms.entity.wrapper.LookController;
 import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 
-public class PEmountcontroller extends AbstractMountController{
-    public PEmountcontroller() {
+public class PEboatcontroller extends AbstractMountController{
+    public PEboatcontroller(){
 
     }
 
     public void updateDriverMovement(MoveController controller, ModeledEntity modelEntity) {
+        // Used to for example check if we are in water
+        Block location = modelEntity.getBase().getLocation().getBlock();
+        String material = String.valueOf(location.getRelative(BlockFace.UP).getType());
         if (this.input.isSneak()) {
             modelEntity.getMountManager().removeDriver();
             controller.move(0.0F, 0.0F, 0.0F);
+            // Disable gravity on the mob, to make it float in water and not sink
+            if(material.equals("WATER") && modelEntity.getBase().getOriginal() instanceof Entity){
+                ((Entity) modelEntity.getBase().getOriginal()).setGravity(false);
+            }
         } else {
-            // Used to for example check if we are in water
-            Block location = modelEntity.getBase().getLocation().getBlock();
-            String material = String.valueOf(location.getRelative(BlockFace.UP).getType());
+            //Needed to manipulate the models Y velocity, to prevent sinking
+            Vector modelVelocity = controller.getVelocity();
             // Movement speed multiplier (this multiplies with entity movements speed set in the mythic mob)
             float multiplier = 1.0F;
-            // This implies we move 50% slower in water
             if(material.equals("WATER")){
-                multiplier = 0.5F;
+                controller.setVelocity(modelVelocity.getX(), 0.0, modelVelocity.getZ());
+                // If we are inside of water, we allow the user to slightly go upwards (to exit waters for example).
+                if (this.input.isJump()) {
+                    // Look carefully at /5, this implies swimming up is 5x as slow as normal walk speed.
+                    controller.addVelocity(0.0, controller.getSpeed()/5, 0.0);
+                }
+            }else{
+                // This implies we move 75% slower on land
+                multiplier = 0.25F;
             }
 
             // General forward and backward movement
@@ -41,18 +57,6 @@ public class PEmountcontroller extends AbstractMountController{
                 modelEntity.setState(ModelState.IDLE);
             } else if (this.input.getFront() != 0.0F && controller.isOnGround()) {
                 modelEntity.setState(ModelState.WALK);
-            } else if (!controller.isOnGround() && !material.equals("WATER")){
-                modelEntity.setState(ModelState.JUMP);
-            }
-
-            // Jump logic, we call controller jump on space press whilst on ground
-            if (this.input.isJump() && controller.isOnGround()) {
-                controller.jump();
-            }
-            // If we are inside of water, we slowly sink due to gravity, but holding space will make us swim up.
-            else if (this.input.isJump() && material.equals("WATER")) {
-                // Look carefully at /5, this implies swimming up is 5x as slow as normal walk speed.
-                controller.addVelocity(0.0, controller.getSpeed()/5, 0.0);
             }
         }
     }

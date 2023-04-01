@@ -22,6 +22,7 @@ public class PEMountController extends AbstractMountController{
         if (this.input.isSneak()) {
             modelEntity.getMountManager().removeDriver();
             controller.move(0.0F, 0.0F, 0.0F);
+            modelEntity.setState(ModelState.IDLE);
             // Disable gravity on the mob, to make it float in water and not sink
             if(String.valueOf(location.getType()).equals("WATER") && modelEntity.getBase().getOriginal() instanceof Entity){
                 ((Entity) modelEntity.getBase().getOriginal()).setGravity(false);

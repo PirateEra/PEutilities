@@ -1,10 +1,12 @@
 package org.udder.peutilities.modelengine.mount.controller.pemount;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.mount.controller.AbstractMountController;
 import com.ticxo.modelengine.api.animation.state.ModelState;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.nms.entity.wrapper.LookController;
 import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -16,11 +18,11 @@ public class PEBoatController extends AbstractMountController{
     }
 
     public void updateDriverMovement(MoveController controller, ModeledEntity modelEntity) {
-        // Prevent the controller from taking damage
+        ActiveModel mainModel = (ActiveModel) modelEntity.getModels().values().toArray()[0];
+        Vector waterY = mainModel.getBone("water_y").getPosition();
+        String material = String.valueOf(new Location(modelEntity.getBase().getWorld(), waterY.getBlockX(),waterY.getBlockY(),waterY.getBlockZ()).getBlock().getType());
+        // Prevent the controller from taking fall damage
         controller.nullifyFallDistance();
-        // Used to for example check if we are in water
-        Block location = modelEntity.getBase().getLocation().getBlock();
-        String material = String.valueOf(location.getRelative(BlockFace.UP).getType());
         if (this.input.isSneak()) {
             modelEntity.getMountManager().removeDriver();
             controller.move(0.0F, 0.0F, 0.0F);

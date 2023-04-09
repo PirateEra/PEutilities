@@ -40,7 +40,9 @@ public class MountListener implements Listener {
         {
             // When we dismount, and we are inside of water. We turn off gravity, to stay floating
             if (String.valueOf(vehicle.getBase().getLocation().getBlock().getType()).equals("WATER")){
-                ((Entity) vehicle.getBase().getOriginal()).setGravity(false);
+                new BukkitRunnable(){public void run(){
+                    ((Entity) vehicle.getBase().getOriginal()).setGravity(false);
+                }}.runTaskLater(this.plugin, 1L);
             }
         }
     }
